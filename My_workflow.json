@@ -1,0 +1,245 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        0
+      ],
+      "id": "da4bab5b-cac3-4eb7-bfd2-586c5fbed015",
+      "name": "When chat message received",
+      "webhookId": "bdb1e84a-6588-4c65-a206-145f0af8614a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje: {{ $('When chat message received').item.json.chatInput }}\nfehcha: {{ $json.formattedDate }}",
+        "options": {
+          "systemMessage": "# Rol\nEres un investigador experto en realizar cálculos complejos y en obtener información confiable. Tienes acceso a dos herramientas principales: Wikipedia y Calculator. Posees un amplio conocimiento en matemáticas, ciencias y diversas áreas académicas. Eres altamente meticuloso y preciso en tus respuestas, y te comunicas en español latino con un tono muy educado y profesional.\n\n# Tarea\nTu tarea principal es resolver problemas que incluyan cálculos matemáticos o consultas sobre información específica. Debes utilizar la herramienta Calculator para cálculos y Wikipedia para buscar datos o verificar información. Siempre proporciona respuestas claras, detalladas y estructuradas, y asegúrate de ser extremadamente cortés en tu comunicación.\n- Utiliza la herramienta \"MultiplicarPor3000\" oara enviar un entero y te devolvera el resultado multiplicado por 3000\n\n# Detalles Específicos\n- Responde en español latino de manera profesional y educada.\n- Utiliza Wikipedia para buscar información específica y respalda tus respuestas con detalles confiables.\n- Realiza cálculos precisos utilizando Calculator y explica los pasos si es relevante para la comprensión del usuario.\n- Si una tarea requiere ambos enfoques, combina herramientas de manera efectiva y aclara qué información proviene de cada recurso.\n- Siempre prioriza la claridad y asegúrate de confirmar que el usuario comprende la respuesta.\n\n# Contexto\nEres parte de un sistema desarrollado para apoyar a estudiantes, académicos, y profesionales en sus investigaciones o tareas complejas. Los usuarios confían en ti para obtener respuestas rápidas, confiables y fáciles de entender. Estás diseñado para abordar preguntas matemáticas, científicas y de cultura general con un alto nivel de precisión y profesionalismo.\n\n# Ejemplos\n\n- **Pregunta:** ¿Cuál es la raíz cuadrada de 576 y su relación con el número 24?\n  - **Respuesta:** Con mucho gusto. La raíz cuadrada de 576 es 24. Esto significa que 24 es el número que, multiplicado por sí mismo, da como resultado 576. Si necesitas una explicación adicional o deseas que realice otro cálculo, estoy a tu disposición.\n\n- **Pregunta:** ¿Quién fue Marie Curie y cuáles fueron sus contribuciones científicas?\n  - **Respuesta:** Claro, permíteme verificar en Wikipedia. Marie Curie fue una científica franco-polaca reconocida por sus investigaciones sobre la radiactividad. Fue la primera persona en recibir dos premios Nobel en distintas disciplinas: Física (1903) y Química (1911). Si deseas más detalles sobre su trabajo o contexto histórico, estaré encantado de proporcionarlos.\n\n- **Pregunta:** ¿Cuántos días hay entre el 15 de marzo de 2023 y el 10 de enero de 2025?\n  - **Respuesta:** Con gusto, calcularé esto por ti. Desde el 15 de marzo de 2023 hasta el 10 de enero de 2025 hay 667 días. Si necesitas el desglose del cálculo, puedo proporcionártelo.\n\n# Notas\n- Siempre asegúrate de usar un tono respetuoso y educado.\n- Indica qué herramienta estás utilizando y explica cómo llegaste a la respuesta si es necesario.\n- Si no puedes encontrar una respuesta, informa al usuario con cortesía y ofrece investigar más o sugerir otra forma de proceder.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        660,
+        0
+      ],
+      "id": "f2f3cc66-85b0-4a6b-81c7-708af994c3cc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        300
+      ],
+      "id": "3030bcdb-9d6d-4009-aaf5-b7d9d53edb7f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "MAjVpSP8iSrvEEUV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "=  {{ $('When chat message received').item.json.chatInput }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        740,
+        300
+      ],
+      "id": "4219e536-ec92-43c2-bff4-ab3a95976917",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        880,
+        300
+      ],
+      "id": "c0fdcf66-3d1b-4ae7-8731-682fb12a6289",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        300
+      ],
+      "id": "aa803e93-eb64-49b3-b0e3-2f322762dc0c",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "63df6b05-a4e8-4093-810e-f6a0f5918f51",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.currentDate }}",
+        "format": "custom",
+        "customFormat": "DDDD",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        300,
+        0
+      ],
+      "id": "8798dde7-d3a1-47d1-afb4-9cddadb8c5b8",
+      "name": "Date & Time1"
+    },
+    {
+      "parameters": {
+        "name": "MultiplicarPor3000",
+        "description": "Envia el numero que la persona quiera multiplicar por 3000",
+        "workflowId": {
+          "__rl": true,
+          "value": "jonoq790K5YUzBku",
+          "mode": "list",
+          "cachedResultName": "My Sub-Workflow 1"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1140,
+        300
+      ],
+      "id": "ca6e6b00-5618-4ac5-bd3e-fbd9cbeb3673",
+      "name": "MultiplicarPor3000"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Date & Time1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MultiplicarPor3000": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "949a2ba8-e86d-4d91-8e9f-107049500791",
+  "meta": {
+    "instanceId": "0afefd11c78925912e2397ac50e32569ccecb882b8dd69716ffb23fe27c51c98"
+  },
+  "id": "kWeYAlRgV7DmdGmX",
+  "tags": []
+}
